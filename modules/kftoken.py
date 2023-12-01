@@ -22,45 +22,47 @@ COMMA = 16
 ASSIGN = 17
 OP = 18
 LOP = 19
-LOOP = 20
-COMP = 21
-RETURN = 22
-AND = 23
-AS = 24
-ASSERT = 25
-ASYNC = 26
-AWAIT = 27
-BREAK = 28
-CLASS = 29
-CONTINUE = 30
-DEF = 31
-DEL = 32
-EXCEPT = 33
-FALSE = 34
-TRUE = 35
-NONE = 36
-FINALLY = 37
-FROM = 38
-NONLOCAL = 39
-NOT = 40
-OR = 41
-PASS = 42
-RAISE = 43
-TRY = 44
-WITH = 45
-CASE = 46
-MATCH = 47
-FSTRING_START = 48
-FSTRING_MIDDLE = 49
-FSTRING_END = 50
-COMMENT = 51
-NL = 52
-TYPE_IGNORE = 53
-TYPE_COMMENT = 54
-SOFT_KEYWORD = 55
-ERRORTOKEN = 56
-ENCODING = 57
-N_TOKENS = 58
+ANNOTE = 20
+PLACEHOLD = 21
+LOOP = 22
+COMP = 23
+RETURN = 24
+AND = 25
+AS = 26
+ASSERT = 27
+ASYNC = 28
+AWAIT = 29
+BREAK = 30
+CLASS = 31
+CONTINUE = 32
+DEF = 33
+DEL = 34
+EXCEPT = 35
+FALSE = 36
+TRUE = 37
+NONE = 38
+FINALLY = 39
+FROM = 40
+NONLOCAL = 41
+NOT = 42
+OR = 43
+PASS = 44
+RAISE = 45
+TRY = 46
+WITH = 47
+CASE = 48
+MATCH = 49
+FSTRING_START = 50
+FSTRING_MIDDLE = 51
+FSTRING_END = 52
+COMMENT = 53
+NL = 54
+TYPE_IGNORE = 55
+TYPE_COMMENT = 56
+SOFT_KEYWORD = 57
+ERRORTOKEN = 58
+ENCODING = 59
+N_TOKENS = 60
 # Special definitions for cooperation with parser
 NT_OFFSET = 256
 
@@ -70,52 +72,52 @@ names = {value: name
 
 __all__.extend(names.values())
 
-symbols = [
-    '!=',       
-    '%', 
-    '%=', 
-    '&', 
-    '&=', 
-    '(', 
-    ')', 
-    '*', 
-    '**', 
-    '**=', 
-    '*=', 
-    '+', 
-    '+=', 
-    ',', 
-    '-', 
-    '-=', 
-    '->', 
-    '.', 
-    '...', 
-    '/', 
-    '//', 
-    '//=', 
-    '/=', 
-    ':', 
-    ':=', 
-    ';', 
-    '<', 
-    '<<', 
-    '<<=', 
-    '<=', 
-    '=', 
-    '==', 
-    '>', 
-    '>=', 
-    '>>', 
-    '>>=', 
-    '@', 
-    '@=', 
-    '[', 
-    ']', 
-    '^', 
-    '^=', 
-    '{', 
-    '|', 
-    '|=', 
-    '}', 
-    '~'
-]
+symbols = {
+    '!=': LOP,       
+    '%': OP, 
+    '%=': ASSIGN, 
+    '&': OP, 
+    '&=': ASSIGN, 
+    '(': LPAR, 
+    ')': RPAR, 
+    '*': OP, 
+    '**': OP, 
+    '**=': ASSIGN, 
+    '*=': ASSIGN, 
+    '+': OP, 
+    '+=': ASSIGN, 
+    ',': COMMA, 
+    '-': OP, 
+    '-=': ASSIGN, 
+    '->': ANNOTE, 
+    '.': DOT, 
+    '...': PLACEHOLD, 
+    '/': OP, 
+    '//': OP, 
+    '//=': ASSIGN, 
+    '/=': ASSIGN, 
+    ':': COLON, 
+    ':=': ASSIGN, 
+    ';': SEMICON, 
+    '<': LOP, 
+    '<<': OP, 
+    '<<=': ASSIGN, 
+    '<=': LOP, 
+    '=': ASSIGN, 
+    '==': LOP, 
+    '>': LOP, 
+    '>=': LOP, 
+    '>>': OP, 
+    '>>=': ASSIGN, 
+    '@': OP, 
+    '@=': ASSIGN, 
+    '[': LSQB, 
+    ']': RSQB, 
+    '^': OP, 
+    '^=': ASSIGN, 
+    '{': LBR, 
+    '|': OP, 
+    '|=': ASSIGN, 
+    '}': RBR, 
+    '~': OP
+}
