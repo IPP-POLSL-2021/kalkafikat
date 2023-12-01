@@ -2,6 +2,7 @@
 """
 
 import collections
+import itertools
 import re
 from kftoken import *
 
@@ -34,4 +35,12 @@ Imagnumber = group(r'[0-9](?:_?[0-9])*[jJ]', Floatnumber + r'[jJ]')
 # combine all number regexes into single regex
 Number = group(Imagnumber, Floatnumber, Intnumber)
 
-
+# generate prefixes used in python
+def _all_string_prefixes():
+    _valid_string_prefixes = ['b', 'r', 'u', 'f', 'br', 'fr']
+    result = {''}
+    for prefix in _valid_string_prefixes:
+        for perm in itertools.permutations(prefix):
+            for prod in itertools.product(*[(pref, pref.upper()) for pref in perm]):
+                result.add(''.join(prod))
+    return result
