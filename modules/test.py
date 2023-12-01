@@ -7,4 +7,4 @@ from token import EXACT_TOKEN_TYPES
 def group(*choices): return '(' + '|'.join(choices) + ')'
 
 print(group(*map(re.escape, sorted(EXACT_TOKEN_TYPES, reverse=True))))
-print(kftoken.tok_name)
+print(kftoken.names)
