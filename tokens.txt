@@ -1,0 +1,106 @@
+# SYMBOLS
+
+endmarkers: endmarkers
+names: name
+numbers:
+    intnumber
+        bin
+        dec
+        oct
+        hex
+    floatnumber
+        pointfloat
+        expfloat
+    inumber
+    +  exponential
+strings:
+    ' 'string
+    " "string
+    ''' '''string
+    """ """string
+    + all prefixes
+newline: newlines
+indent: indents
+dedent: dedent
+lpar: lpar
+rpar: rpar
+lsqrb: lsqrb
+rsqrb: rsqrb
+lbrace: lbrace
+rbrace: rbrace
+colon: colon
+semicon: semicon
+dot: dot
+comma: comma
+assign:
+    assign
+    addassign
+    subassign
+    mulassign
+    divassign
+    modassign
+    expassign
+    fdvassign
+    rshassign
+    lshassign
+    mxmassign
+op:
+    add
+    sub
+    mul
+    div
+    mod
+    exp
+    fdv
+    mxm
+    bwor
+    lshift
+    rshift
+    bwand
+    comp
+    bwxor
+lop:
+    less
+    great
+    equal
+    notequal
+    lessequal
+    greatequal
+
+# SYNTAX (from name symbol)
+
+loops:
+    for
+    while
+comparisions:
+    if
+    elif
+    else
+returnstmt:
+    return
+    yield
+and: and
+as: as
+assert: assert
+async: async
+await: await
+break: break
+class: class
+continue: continue
+def: def
+del: del
+except: except
+False: False
+True: True
+None: None
+finally: finally
+from: from
+nonlocal: nonlocal
+not: not
+or: or
+pass: pass
+raise: raise
+try: try
+with: with
+case: case
+match: match
