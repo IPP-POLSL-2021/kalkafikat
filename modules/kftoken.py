@@ -1,6 +1,6 @@
 """Token constants for plagiarism check."""
 
-__all__ = ['tok_name']
+__all__ = ['names']
 
 ENDMARKER = 0
 NAME = 1
@@ -64,8 +64,8 @@ N_TOKENS = 58
 # Special definitions for cooperation with parser
 NT_OFFSET = 256
 
-tok_name = {value: name
+names = {value: name
             for name, value in globals().items()
             if isinstance(value, int) and not name.startswith('_')}
 
-__all__.extend(tok_name.values())
+__all__.extend(names.values())
