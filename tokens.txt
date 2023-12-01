@@ -44,6 +44,8 @@ assign:
     rshassign
     lshassign
     mxmassign
+    increment
+    decrement
 op:
     add
     sub
