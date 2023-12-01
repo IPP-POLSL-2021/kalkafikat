@@ -1,6 +1,6 @@
 """Token constants for plagiarism check."""
 
-__all__ = ['names']
+__all__ = ['names', 'symbols']
 
 ENDMARKER = 0
 NAME = 1
