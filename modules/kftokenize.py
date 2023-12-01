@@ -2,6 +2,7 @@
 """
 
 import collections
+import functools
 import itertools
 import re
 from kftoken import *
@@ -9,6 +10,11 @@ from kftoken import *
 import kftoken
 __all__ = kftoken.__all__ + []
 del kftoken
+
+# memorize function into cache (expression is compiled as unicode)
+@functools.lru_cache
+def _compile(expr):
+    return re.compile(expr, re.UNICODE)
 
 class TokenNode(collections.namedtuple('TokenNode', 'type string start end line')):
     def __repr__(self):
