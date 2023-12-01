@@ -50,3 +50,5 @@ def _all_string_prefixes():
             for prod in itertools.product(*[(pref, pref.upper()) for pref in perm]):
                 result.add(''.join(prod))
     return result
+
+StringPrefix = group(*_all_string_prefixes())
