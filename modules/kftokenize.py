@@ -41,6 +41,12 @@ Imagnumber = group(r'[0-9](?:_?[0-9])*[jJ]', Floatnumber + r'[jJ]')
 # combine all number regexes into single regex
 Number = group(Imagnumber, Floatnumber, Intnumber)
 
+# special symbols regex
+# reverse to ensure shorter symbols don't come before longer ones, ending search
+Special = group(*map(re.escape, sorted(symbols, reverse=True)))
+# group them with withspaces
+Special = group(r'\r?\n', Special)
+
 # generate prefixes used in python
 def _all_string_prefixes():
     _valid_string_prefixes = ['b', 'r', 'u', 'f', 'br', 'fr']
