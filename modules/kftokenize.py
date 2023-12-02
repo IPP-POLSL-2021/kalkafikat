@@ -5,6 +5,7 @@ import collections
 import functools
 import itertools
 import re
+
 from kftoken import *
 
 import kftoken
@@ -63,3 +64,21 @@ def _all_string_prefixes():
     return result
 
 StringPrefixRegex = group(*_all_string_prefixes())
+
+# Tail end of ' string.
+Single = r"[^'\\]*(?:\\.[^'\\]*)*'"
+# Tail end of " string.
+Double = r'[^"\\]*(?:\\.[^"\\]*)*"'
+# Tail end of ''' string.
+Single3 = r"[^'\\]*(?:(?:\\.|'(?!''))[^'\\]*)*'''"
+# Tail end of """ string.
+Double3 = r'[^"\\]*(?:(?:\\.|"(?!""))[^"\\]*)*"""'
+# Beginning of ''' or """ string
+Triple = group(StringPrefixRegex + "'''", StringPrefixRegex + '"""')
+
+String = group(StringPrefixRegex + r"'[^\n'\\]*(?:\\.[^\n'\\]*)*" +
+                group("'", r'\\\r?\n'),
+                StringPrefixRegex + r'"[^\n"\\]*(?:\\.[^\n"\\]*)*' +
+                group('"', r'\\\r?\n'))
+Extras = group(r'\\\r?\n|\Z', Comment, Triple)
+PseudoToken = Whitespace + group(Extras, Number, Special, String, Name)
