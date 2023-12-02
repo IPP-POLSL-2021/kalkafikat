@@ -27,6 +27,11 @@ def group(*choices): return '(' + '|'.join(choices) + ')'
 def any(*choices): return group(*choices) + '*'
 def maybe(*choices): return group(*choices) + '?'
 
+# basic regexes
+Whitespace = r'[ \f\t]*'
+Comment = r'#[^\r\n]*'
+Name = r'\w+'
+
 # making regex for every number literal
 Hexnumber = r'0[xX](?:_?[0-9a-fA-F])+'
 Binnumber = r'0[bB](?:_?[01])+'
