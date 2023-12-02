@@ -62,4 +62,4 @@ def _all_string_prefixes():
                 result.add(''.join(prod))
     return result
 
-StringPrefix = group(*_all_string_prefixes())
+StringPrefixRegex = group(*_all_string_prefixes())
