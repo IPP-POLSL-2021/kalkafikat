@@ -1,6 +1,6 @@
 """Token constants for plagiarism check."""
 
-__all__ = ['names', 'symbols']
+__all__ = ['names', 'symbols', 'syntax']
 
 ENDMARKER = 0
 NAME = 1
@@ -120,4 +120,39 @@ symbols = {
     '|=': ASSIGN, 
     '}': RBR, 
     '~': OP
+}
+
+syntax = {
+    'for': LOOP,
+    'while': LOOP,
+    'if': COMP,
+    'elif': COMP,
+    'else': COMP,
+    'return': RETURN,
+    'yield': RETURN,
+    'and': AND,
+    'as': AS,
+    'assert': ASSERT,
+    'async': ASYNC,
+    'await': AWAIT,
+    'break': BREAK,
+    'class': CLASS,
+    'continue': CONTINUE,
+    'def': DEF,
+    'del': DEL,
+    'except': EXCEPT,
+    'False': FALSE,
+    'True': TRUE,
+    'None': NONE,
+    'finally': FINALLY,
+    'from': FROM,
+    'nonlocal': NONLOCAL,
+    'not': NOT,
+    'or': OR,
+    'pass': PASS,
+    'raise': RAISE,
+    'try': TRY,
+    'with': WITH,
+    'case': CASE,
+    'match': MATCH
 }
