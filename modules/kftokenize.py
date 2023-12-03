@@ -1,8 +1,11 @@
 """Tokenization for plagiarism checking.
 """
+
+from builtins import open as _open
 from codecs import BOM_UTF8
 import collections
 import functools
+from io import TextIOWrapper
 import itertools
 import re
 
@@ -97,4 +100,16 @@ def detect_encoding(readline):
         default = 'utf-8-sig'
     if not line:
         return default
+    return default
     
+def open(filename):
+    buffer = _open(filename, 'rb')
+    try:
+        encoding = detect_encoding(buffer.readline)
+        buffer.seek(0)
+        text = TextIOWrapper(buffer, encoding, line_buffering=True)
+        text.mode = 'r'
+        return text
+    except:
+        buffer.close()
+        raise    
