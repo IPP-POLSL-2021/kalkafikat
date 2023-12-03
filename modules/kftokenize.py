@@ -247,7 +247,8 @@ def token_generator(readline):
                 elif initial.isidentifier():               # ordinary name
                     if token in syntax:
                         yield TokenNode(syntax[token], token, spos, epos, line)
-                    yield TokenNode(NAME, token, spos, epos, line)
+                    else:
+                        yield TokenNode(NAME, token, spos, epos, line)
                 elif initial == '\\':                      # continued stmt
                     continued = 1
                 else:
