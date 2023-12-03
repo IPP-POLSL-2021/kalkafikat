@@ -268,6 +268,8 @@ def token_generator(readline):
         yield TokenNode(DEDENT, '', (lnum, 0), (lnum, 0), '')
     yield TokenNode(ENDMARKER, '', (lnum, 0), (lnum, 0), '')
 
+def tokenize(readline):
+    return token_generator(readline)
 
 def detect_encoding(readline):
     default = 'utf-8'
