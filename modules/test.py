@@ -19,10 +19,11 @@ print(b.startswith(codecs.BOM_UTF8))
 
 buffer = open('tokens.txt', 'rb')
 try:
+    line = buffer.readline()
     buffer.seek(0)
     text = TextIOWrapper(buffer, 'utf-8', line_buffering=True)
     text.mode = 'r'
-    print(text)
+    print(text, line, buffer, buffer.readline())
 except:
     buffer.close()
     raise
