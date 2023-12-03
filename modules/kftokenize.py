@@ -12,7 +12,7 @@ import re
 from kftoken import *
 
 import kftoken
-__all__ = kftoken.__all__ + []
+__all__ = kftoken.__all__ + ['tokenize', 'TokenNode', 'detect_encoding']
 del kftoken
 
 # memorize function into cache (expression is compiled as unicode)
