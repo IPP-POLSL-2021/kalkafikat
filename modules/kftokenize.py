@@ -202,7 +202,6 @@ def token_generator(readline):
                 if start == end:
                     continue
                 token, initial = line[start:end], line[start]
-                print(token)
 
                 if (initial in numchars or                 # ordinary number
                     (initial == '.' and token != '.' and token != '...')):
