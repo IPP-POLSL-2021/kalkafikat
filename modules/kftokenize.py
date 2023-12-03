@@ -1,6 +1,6 @@
 """Tokenization for plagiarism checking.
 """
-
+from codecs import BOM_UTF8
 import collections
 import functools
 import itertools
@@ -82,3 +82,19 @@ String = group(StringPrefixRegex + r"'[^\n'\\]*(?:\\.[^\n'\\]*)*" +
                 group('"', r'\\\r?\n'))
 Extras = group(r'\\\r?\n|\Z', Comment, Triple)
 PseudoToken = Whitespace + group(Extras, Number, Special, String, Name)
+
+def detect_encoding(readline):
+    default = 'utf-8'
+    def read():
+        try:
+            return readline()
+        except StopIteration:
+            return b''
+
+    line = read()
+    if line.startswith(BOM_UTF8):
+        line = line[3:]
+        default = 'utf-8-sig'
+    if not line:
+        return default
+    
