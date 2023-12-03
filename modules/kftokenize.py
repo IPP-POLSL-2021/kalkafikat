@@ -23,7 +23,7 @@ def _compile(expr):
 class TokenNode(collections.namedtuple('TokenNode', 'type string start end line')):
     def __repr__(self):
         annotated_type = '%d (%s)' % (self.type, names[self.type])
-        return ('TokenInfo(type=%s, string=%r, start=%r, end=%r, line=%r)' %
+        return ('TokenNode(type=%s, string=%r, start=%r, end=%r, line=%r)' %
                 self._replace(type=annotated_type))
 
 # regex group functions (grouping with or)
@@ -86,26 +86,187 @@ String = group(StringPrefixRegex + r"'[^\n'\\]*(?:\\.[^\n'\\]*)*" +
 Extras = group(r'\\\r?\n|\Z', Comment, Triple)
 PseudoToken = Whitespace + group(Extras, Number, Special, String, Name)
 
-class Tokenizer():
-    def __init__(self):
-        endpats = {}
-        for _prefix in _all_string_prefixes():
-            endpats[_prefix + "'"] = Single
-            endpats[_prefix + '"'] = Double
-            endpats[_prefix + "'''"] = Single3
-            endpats[_prefix + '"""'] = Double3
+class TokenError(Exception): pass
+class StopTokenizing(Exception): pass
 
-        single_quoted = set()
-        triple_quoted = set()
-        for t in _all_string_prefixes():
-            for u in (t + '"', t + "'"):
-                single_quoted.add(u)
-            for u in (t + '"""', t + "'''"):
-                triple_quoted.add(u)
 
-        tabsize = 8
-    def tokenize(self, readline):
-        pass
+endpats = {}
+for _prefix in _all_string_prefixes():
+    endpats[_prefix + "'"] = Single
+    endpats[_prefix + '"'] = Double
+    endpats[_prefix + "'''"] = Single3
+    endpats[_prefix + '"""'] = Double3
+
+single_quoted = set()
+triple_quoted = set()
+for t in _all_string_prefixes():
+    for u in (t + '"', t + "'"):
+        single_quoted.add(u)
+    for u in (t + '"""', t + "'''"):
+        triple_quoted.add(u)
+
+tabsize = 8
+
+def token_generator(readline):
+    lnum = parenlev = continued = 0
+    numchars = '0123456789'
+    contstr, needcont = '', 0
+    contline = None
+    indents = [0]
+
+    last_line = b''
+    line = b''
+    while True:
+        try:
+            # We capture the value of the line variable here because
+            # readline uses the empty string '' to signal end of input,
+            last_line = line
+            line = readline()
+        except StopIteration:
+            line = b''
+
+        lnum += 1
+        pos, max = 0, len(line)
+
+        # continued string
+        if contstr:
+            if not line:
+                raise TokenError("EOF in multi-line string", strstart)
+            endmatch = endprog.match(line)
+            if endmatch:
+                pos = end = endmatch.end(0)
+                yield TokenNode(STRING, contstr + line[:end],
+                    strstart, (lnum, end), contline + line)
+                contstr, needcont = '', 0
+                contline = None
+            elif needcont and line[-2:] != '\\\n' and line[-3:] != '\\\r\n':
+                yield TokenNode(ERRORTOKEN, contstr + line,
+                        strstart, (lnum, len(line)), contline)
+                contstr = ''
+                contline = None
+                continue
+            else:
+                contstr = contstr + line
+                contline = contline + line
+                continue
+
+        elif parenlev == 0 and not continued:
+            if not line: break
+            column = 0
+            while pos < max:
+                if line[pos] == ' ':
+                    column += 1
+                elif line[pos] == '\t':
+                    column = (column//tabsize + 1)*tabsize
+                elif line[pos] == '\f':
+                    column = 0
+                else:
+                    break
+                pos += 1
+            if pos == max:
+                break
+
+            if line[pos] in '#\r\n':           # skip comments or blank lines
+                if line[pos] == '#':
+                    comment_token = line[pos:].rstrip('\r\n')
+                    yield TokenNode(COMMENT, comment_token,
+                        (lnum, pos), (lnum, pos + len(comment_token)), line)
+                    pos += len(comment_token)
+
+                yield TokenNode(NL, line[pos:],
+                        (lnum, pos), (lnum, len(line)), line)
+                continue
+
+            if column > indents[-1]:           # count indents or dedents
+                indents.append(column)
+                yield TokenNode(INDENT, line[:pos], (lnum, 0), (lnum, pos), line)
+            while column < indents[-1]:
+                if column not in indents:
+                    raise IndentationError(
+                        "unindent does not match any outer indentation level",
+                        ("<tokenize>", lnum, pos, line))
+                indents = indents[:-1]
+
+                yield TokenNode(DEDENT, '', (lnum, pos), (lnum, pos), line)
+
+        else:                                  # continued statement
+            if not line:
+                raise TokenError("EOF in multi-line statement", (lnum, 0))
+            continued = 0
+
+        while pos < max:
+            pseudomatch = _compile(PseudoToken).match(line, pos)
+            if pseudomatch:                                # scan for tokens
+                start, end = pseudomatch.span(1)
+                spos, epos, pos = (lnum, start), (lnum, end), end
+                if start == end:
+                    continue
+                token, initial = line[start:end], line[start]
+                print(token)
+
+                if (initial in numchars or                 # ordinary number
+                    (initial == '.' and token != '.' and token != '...')):
+                    yield TokenNode(NUMBER, token, spos, epos, line)
+                elif initial in '\r\n':
+                    if parenlev > 0:
+                        yield TokenNode(NL, token, spos, epos, line)
+                    else:
+                        yield TokenNode(NEWLINE, token, spos, epos, line)
+
+                elif initial == '#':
+                    assert not token.endswith("\n")
+                    yield TokenNode(COMMENT, token, spos, epos, line)
+
+                elif token in triple_quoted:
+                    endprog = _compile(endpats[token])
+                    endmatch = endprog.match(line, pos)
+                    if endmatch:                           # all on one line
+                        pos = endmatch.end(0)
+                        token = line[start:pos]
+                        yield TokenNode(STRING, token, spos, (lnum, pos), line)
+                    else:
+                        strstart = (lnum, start)           # multiple lines
+                        contstr = line[start:]
+                        contline = line
+                        break
+
+                elif (initial in single_quoted or
+                    token[:2] in single_quoted or
+                    token[:3] in single_quoted):
+                    if token[-1] == '\n':                  # continued string
+                        strstart = (lnum, start)
+                        endprog = _compile(endpats.get(initial) or
+                                        endpats.get(token[1]) or
+                                        endpats.get(token[2]))
+                        contstr, needcont = line[start:], 1
+                        contline = line
+                        break
+                    else:                                  # ordinary string
+                        yield TokenNode(STRING, token, spos, epos, line)
+
+                elif initial.isidentifier():               # ordinary name
+                    if token in syntax:
+                        yield TokenNode(syntax[token], token, spos, epos, line)
+                    yield TokenNode(NAME, token, spos, epos, line)
+                elif initial == '\\':                      # continued stmt
+                    continued = 1
+                else:
+                    if initial in '([{':
+                        parenlev += 1
+                    elif initial in ')]}':
+                        parenlev -= 1
+                    yield TokenNode(symbols[initial], token, spos, epos, line)
+            else:
+                yield TokenNode(ERRORTOKEN, line[pos],
+                        (lnum, pos), (lnum, pos+1), line)
+                pos += 1
+
+    # Add an implicit NEWLINE if the input doesn't end in one
+    if last_line and last_line[-1] not in '\r\n' and not last_line.strip().startswith("#"):
+        yield TokenNode(NEWLINE, '', (lnum - 1, len(last_line)), (lnum - 1, len(last_line) + 1), '')
+    for indent in indents[1:]:                 # pop remaining indent levels
+        yield TokenNode(DEDENT, '', (lnum, 0), (lnum, 0), '')
+    yield TokenNode(ENDMARKER, '', (lnum, 0), (lnum, 0), '')
 
 
 def detect_encoding(readline):
