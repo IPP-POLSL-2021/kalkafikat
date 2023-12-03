@@ -73,7 +73,8 @@ names = {value: name
 __all__.extend(names.values())
 
 symbols = {
-    '!=': LOP,       
+    '!=': LOP,  
+    '!': OP,     
     '%': OP, 
     '%=': ASSIGN, 
     '&': OP, 
