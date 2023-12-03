@@ -86,6 +86,28 @@ String = group(StringPrefixRegex + r"'[^\n'\\]*(?:\\.[^\n'\\]*)*" +
 Extras = group(r'\\\r?\n|\Z', Comment, Triple)
 PseudoToken = Whitespace + group(Extras, Number, Special, String, Name)
 
+class Tokenizer():
+    def __init__(self):
+        endpats = {}
+        for _prefix in _all_string_prefixes():
+            endpats[_prefix + "'"] = Single
+            endpats[_prefix + '"'] = Double
+            endpats[_prefix + "'''"] = Single3
+            endpats[_prefix + '"""'] = Double3
+
+        single_quoted = set()
+        triple_quoted = set()
+        for t in _all_string_prefixes():
+            for u in (t + '"', t + "'"):
+                single_quoted.add(u)
+            for u in (t + '"""', t + "'''"):
+                triple_quoted.add(u)
+
+        tabsize = 8
+    def tokenize(self, readline):
+        pass
+
+
 def detect_encoding(readline):
     default = 'utf-8'
     def read():
