@@ -7,6 +7,7 @@ import codecs
 from token import EXACT_TOKEN_TYPES
 import glob
 import numpy as np
+import shutil
 
 
 def similar(str1, str2):
@@ -18,6 +19,7 @@ def similar(str1, str2):
 
 def TakPlagiat(str1):
     plagiatNaTaken = 0
+    shutil.copy2(str1, './baza')
     with kftokenize.open(str1) as f:
         original_tokens = list(kftokenize.tokenize(f.readline))
 
