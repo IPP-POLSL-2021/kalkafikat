@@ -1,6 +1,10 @@
+import tokenize as tkn
+import token as tk
 import kftokenize
-import glob
-import numpy as np
+import re
+from io import TextIOWrapper
+import codecs
+from token import EXACT_TOKEN_TYPES
 
 
 def similar(str1, str2):
