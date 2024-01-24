@@ -17,21 +17,36 @@ def similar(str1, str2):
                for i, j in zip(str1, str2)) / float(len(str1))
 
 
-def TakPlagiat(str1):
+def TakPlagiat(str1, tryb=1, *args):
     plagiatNaTaken = 0
     shutil.copy2(str1, './baza')
     with kftokenize.open(str1) as f:
         original_tokens = list(kftokenize.tokenize(f.readline))
 
         pliki = glob.glob('./baza/*.py')
-        print(pliki)
         tabavg = []
 
         for token in original_tokens:
             max_similarity_per_line = []
+            if tryb == 1:
+                print(pliki)
+                for plik in pliki:
+                    with kftokenize.open(plik) as plagiat:
+                        plagiat_tokens = list(
+                            kftokenize.tokenize(plagiat.readline))
+                        max_similarity = 0
 
-            for plik in pliki:
-                with kftokenize.open(plik) as plagiat:
+                        for token2 in plagiat_tokens:
+                            tok_str2 = repr(token2)
+                            token_str = repr(token)
+                            max_similarity = max(
+                                max_similarity, similar(token_str, tok_str2))
+
+                        max_similarity_per_line.append(max_similarity)
+
+                tabavg.append(max(max_similarity_per_line))
+            else:
+                with kftokenize.open(args[0]) as plagiat:
                     plagiat_tokens = list(
                         kftokenize.tokenize(plagiat.readline))
                     max_similarity = 0
@@ -44,8 +59,7 @@ def TakPlagiat(str1):
 
                     max_similarity_per_line.append(max_similarity)
 
-            tabavg.append(max(max_similarity_per_line))
-
+                tabavg.append(max(max_similarity_per_line))
         print(np.average(tabavg) * 100)
         plagiatNaTaken = (np.average(tabavg) * 100)
     return plagiatNaTaken
