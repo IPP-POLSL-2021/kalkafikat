@@ -1,7 +1,8 @@
-import modules.kftokenize as kftokenize
+import kftokenize
 import glob
 import numpy as np
 import os
+import shutil
 
 CUR_DIR = os.path.dirname(__file__)
 
@@ -33,7 +34,7 @@ def check(filename: str) -> float:
                         max_similarity = max(max_similarity, similar(token_str, tok_str2))
                     max_similarity_per_line.append(max_similarity)
             tabavg.append(max(max_similarity_per_line))
-
+    shutil.copy2(filename, os.path.join(CUR_DIR,'baza'))
     return(np.average(tabavg) * 100)
 
 def compare(filename1: str, filename2: str) -> float:
@@ -54,5 +55,6 @@ def compare(filename1: str, filename2: str) -> float:
                     max_similarity = max(max_similarity, similar(token_str, tok_str2))
                 max_similarity_per_line.append(max_similarity)
             tabavg.append(max(max_similarity_per_line))
-
+    shutil.copy2(filename1, os.path.join(CUR_DIR,'baza'))
+    shutil.copy2(filename2, os.path.join(CUR_DIR,'baza'))
     return(np.average(tabavg) * 100)
